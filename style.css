@@ -1,0 +1,9 @@
+body {
+    background-color: #ddd;
+    color: #333;
+    text-align: center;
+}
+
+li {
+    list-style: decimal-leading-zero;
+}
