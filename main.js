@@ -1,14 +1,8 @@
 var request = new XMLHttpRequest()
 request.open("GET", "https://cors-proxy.blaseball-reference.com/database/allTeams", true)
-
-var progress = document.getElementById("progress")
-var progressIndicator = progress.innerHTML
-
-progressIndicator = "Sending request to Blaseball..."
 request.send();
 
 request.onload = function() {
-    progressIndicator = "Parsing data..."
     var teams = JSON.parse(this.response)
     var totals = teams.map(team => team.lineup.length + team.rotation.length)
     // Get all player counts that there are from greatest to least
@@ -22,7 +16,6 @@ request.onload = function() {
         }
     )
 
-    progressIndicator = "Displaying data..."
     // Now make headers & lists for all the player counts
     playercounts.forEach(function(item) {
         document.body.insertAdjacentHTML("beforeend", "<h1>" 
@@ -42,5 +35,5 @@ request.onload = function() {
                                                                                        + " pitchers)</li>")
     })
 
-    progress.remove()
+    document.getElementById("progress").remove()
 }
