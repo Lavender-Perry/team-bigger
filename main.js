@@ -10,12 +10,14 @@ request.onload = function() {
 
     let teams = JSON.parse(this.response)
     let totals = teams.map(team => team.lineup.length + team.rotation.length)
+
+    let results = document.getElementById("results")
     // Get all player counts that there are from greatest to least
     // & make headers & lists for them
     totals.slice().sort((x, y) => y - x)
         .filter((item, pos, array) => !pos || item !== array[pos - 1])
         .forEach(function(item) {
-            document.body.insertAdjacentHTML("beforeend",
+            results.insertAdjacentHTML("beforeend",
                 `<h1>${item} player${ending(item)}</h1>
                  <ul id="tlist${item}"></ul>`)
     })
