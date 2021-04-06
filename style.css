@@ -7,3 +7,7 @@ body {
 li {
     list-style: decimal-leading-zero;
 }
+
+form {
+    display: none;
+}
