@@ -8,6 +8,6 @@ li {
     list-style: decimal-leading-zero;
 }
 
-form {
+div, form {
     display: none;
 }
