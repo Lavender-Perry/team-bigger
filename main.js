@@ -1,3 +1,5 @@
+"use strict"
+
 let request = new XMLHttpRequest()
 request.open(
     "GET",
@@ -34,19 +36,21 @@ request.onload = function() {
     )
 
     // Set the toggle function for & display the checkbox
-    shadows.oninput = shadows_on = function() {
-        results_shadowed.style.display = "block"
-        results.style.display = "none"
-        // Toggle off function
-        shadows.oninput = function() {
-            results.style.display = "block"
-            results_shadowed.style.display = "none"
-            shadows.oninput = shadows_on
-        }
-    }
+    shadows.oninput = checkbox_toggle
     shadows.style.display = "block"
 
     document.getElementById("progress").remove()
+}
+
+function checkbox_toggle() {
+    results_shadowed.style.display = "block"
+    results.style.display = "none"
+    // Toggle off function
+    shadows.oninput = function() {
+        results.style.display = "block"
+        results_shadowed.style.display = "none"
+        shadows.oninput = checkbox_toggle
+    }
 }
 
 function display_teams(totals, teams, div_container, hitters_fn, pitchers_fn) {
@@ -58,7 +62,7 @@ function display_teams(totals, teams, div_container, hitters_fn, pitchers_fn) {
             div_container.insertAdjacentHTML("afterbegin",
                 `<h1>${total} player${ENDING(total)}</h1>
                  <ul id="${div_container.id}_tlist${total}"></ul>`)
-    })
+        })
     // Put the teams in the lists
     teams.forEach(function(team, pos) {
         let hitters = hitters_fn(team)
