@@ -4,8 +4,12 @@ body {
     text-align: center;
 }
 
+ul {
+    padding: 0px;
+}
+
 li {
-    list-style: decimal-leading-zero;
+    list-style: none;
 }
 
 div, form {
