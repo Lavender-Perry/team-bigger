@@ -38,22 +38,22 @@ fetch(datablase + "allTeams").then(function(response) {
                         results.style.display = "block"
                         // Get shadowed ready for display
                         display_teams(ttShadows, gameTeams, results_shadowed)
+                        // Get FK results ready for display
+                        display_teams(teamTotal, teams, fkresults)
+                        display_teams(ttShadows, teams, fkresults_shadowed)
+
+                        // Set the input function for & display the options form
+                        options.oninput = optionsInputHandler
+                        options.style.display = "block"
+
+                        // Remove the loading indicator
+                        progress.remove()
                     })
                 } else {
                     aerror()
                 }
             })
-
-            // Get FK results ready for display
-            display_teams(teamTotal, teams, fkresults)
-            display_teams(ttShadows, teams, fkresults_shadowed)
         })
-
-        // Set the input function for & display the options form
-        options.oninput = optionsInputHandler
-        options.style.display = "block"
-
-        progress.remove()
     } else {
         aerror()
     }
