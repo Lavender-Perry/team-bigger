@@ -19,10 +19,10 @@ fetch(datablase + "allTeams").then(function(response) {
                         // Filter all teams to just the ones in the game
                         const divisionNames = [
                             // Update whenever Blaseball divisions change
-                            "Wild Low",
-                            "Wild High",
-                            "Mild Low",
-                            "Mild High"
+                            "Vault",
+                            "Hall",
+                            "Horizon",
+                            "Desert"
                         ]
                         let teamIDs = []
                         divisions.forEach(function(division) {
