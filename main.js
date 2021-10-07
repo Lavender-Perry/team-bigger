@@ -2,7 +2,6 @@
 
 /* All undeclared variables are IDs of HTML elements */
 
-// Get & parse Blaseball API data
 const datablase = "https://cors-proxy.blaseball-reference.com/database/";
 
 // Alerts for an error fetching API data
@@ -10,62 +9,62 @@ const aerror = response => alert(
     "Error fetching Blaseball API data: " + response.status
 );
 
-fetch(datablase + "allTeams").then(function(response) {
-    if (response.ok) {
-        response.json().then(prepareTeams);
-    } else {
+const allTeamsRequest = fetch(datablase + "allTeams");
+
+// Functions for calculating total players on a team
+const teamTotal = team => team.lineup.length + team.rotation.length;
+const ttShadows = team => teamTotal(team) + team.shadows.length;
+
+// Get all divisons in the game & filter them to the active ones, filtering
+// the teams to the ones in those divisions
+fetch(datablase + "allDivisions").then(function(response) {
+    if (response.ok)
+        response.json().then(filterAndShowTeams);
+    else
         aerror(response);
-    }
 });
 
-// Uses all teams from first API request to prepare all content for showing
-function prepareTeams(teams) {
-    // Functions for calculating total players on a team
-    const teamTotal = team => team.lineup.length + team.rotation.length;
-    const ttShadows = team => teamTotal(team) + team.shadows.length;
-
-    // Get all divisons in the game & filter them to the active ones, filtering
-    // the teams to the ones in those divisions
-    fetch(datablase + "allDivisions").then(function(response) {
-        if (response.ok) {
-            response.json().then(function(divisions) {
-                // Filter all teams to just the ones in the game
-                const divisionNames = [
-                    // Update whenever Blaseball divisions change
-                    "Vault",
-                    "Hall",
-                    "Horizon",
-                    "Desert"
-                ];
-                let teamIDs = [];
-                divisions.forEach(function(division) {
-                    if (divisionNames.indexOf(division.name) !== -1) {
-                        teamIDs = teamIDs.concat(division.teams);
-                    }
-                })
-                const gameTeams = teams.filter(
-                    team => teamIDs.indexOf(team.id) !== -1
-                );
-                // Display normal results
-                display_teams(teamTotal, gameTeams, results);
-                results.style.display = "block";
-                // Get shadowed ready for display
-                display_teams(ttShadows, gameTeams, results_shadowed);
-                // Get FK results ready for display
-                display_teams(teamTotal, teams, fkresults);
-                display_teams(ttShadows, teams, fkresults_shadowed);
-
-                // Set the input function for & display the options form
-                options.oninput = optionsInputHandler;
-                options.style.display = "block";
-
-                // Remove the loading indicator
-                progress.remove();
-            })
-        } else {
-            aerror(response);
+// Waits for allTeamsRequest, filters teams, prepares all lists for display
+async function filterAndShowTeams(divisions) {
+    // Filter all teams to just the ones in the game
+    const divisionNames = [
+        // Update whenever Blaseball divisions change
+        "Vault",
+        "Hall",
+        "Horizon",
+        "Desert"
+    ];
+    let teamIDs = [];
+    divisions.forEach(function(division) {
+        if (divisionNames.indexOf(division.name) !== -1) {
+            teamIDs = teamIDs.concat(division.teams);
         }
-    });
+    })
+    const allTeamsResponse = await allTeamsRequest;
+    if (!allTeamsResponse.ok) {
+        aerror();
+        return;
+    }
+    const teams = await allTeamsResponse.json();
+    const gameTeams = teams.filter(
+        team => teamIDs.indexOf(team.id) !== -1
+    );
+
+    // Display normal results
+    display_teams(teamTotal, gameTeams, results);
+    results.style.display = "block";
+    // Get shadowed ready for display
+    display_teams(ttShadows, gameTeams, results_shadowed);
+    // Get FK results ready for display
+    display_teams(teamTotal, teams, fkresults);
+    display_teams(ttShadows, teams, fkresults_shadowed);
+
+    // Set the input function for & display the options form
+    options.oninput = optionsInputHandler;
+    options.style.display = "block";
+
+    // Remove the loading indicator
+    progress.remove();
 }
 
 // Calculates team total players of teams using totals_fn, & displays them from most
