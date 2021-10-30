@@ -2,28 +2,6 @@
 
 /* All undeclared variables are IDs of HTML elements */
 
-const datablase = "https://cors-proxy.blaseball-reference.com/database/";
-
-// Alerts for an error fetching API data
-const aerror = response => alert(
-    "Error fetching Blaseball API data: " + response.status
-);
-
-const allTeamsRequest = fetch(datablase + "allTeams");
-
-// Functions for calculating total players on a team
-const teamTotal = team => team.lineup.length + team.rotation.length;
-const ttShadows = team => teamTotal(team) + team.shadows.length;
-
-// Get all divisons in the game & filter them to the active ones, filtering
-// the teams to the ones in those divisions
-fetch(datablase + "allDivisions").then(function(response) {
-    if (response.ok)
-        response.json().then(filterAndShowTeams);
-    else
-        aerror(response);
-});
-
 // Waits for allTeamsRequest, filters teams, prepares all lists for display
 async function filterAndShowTeams(divisions) {
     // Filter all teams to just the ones in the game
@@ -34,30 +12,25 @@ async function filterAndShowTeams(divisions) {
         "Horizon",
         "Desert"
     ];
-    let teamIDs = [];
-    divisions.forEach(function(division) {
-        if (divisionNames.indexOf(division.name) !== -1) {
-            teamIDs = teamIDs.concat(division.teams);
-        }
-    })
+    const teamIDs = divisions
+        .filter(division => divisionNames.indexOf(division.name) !== -1)
+        .reduce((acc, val) => acc.concat(val.teams), []);
+
     const allTeamsResponse = await allTeamsRequest;
-    if (!allTeamsResponse.ok) {
-        aerror();
-        return;
-    }
+    if (!allTeamsResponse.ok)
+        aerror(allTeamsResponse.status);
+
     const teams = await allTeamsResponse.json();
-    const gameTeams = teams.filter(
-        team => teamIDs.indexOf(team.id) !== -1
-    );
+    const gameTeams = teams.filter(team => teamIDs.indexOf(team.id) !== -1);
 
     // Display normal results
-    display_teams(teamTotal, gameTeams, results);
+    displayTeams(teamTotal, gameTeams, results);
     results.style.display = "block";
     // Get shadowed ready for display
-    display_teams(ttShadows, gameTeams, results_shadowed);
+    displayTeams(ttShadows, gameTeams, results_shadowed);
     // Get FK results ready for display
-    display_teams(teamTotal, teams, fkresults);
-    display_teams(ttShadows, teams, fkresults_shadowed);
+    displayTeams(teamTotal, teams, fkresults);
+    displayTeams(ttShadows, teams, fkresults_shadowed);
 
     // Set the input function for & display the options form
     options.oninput = optionsInputHandler;
@@ -69,7 +42,7 @@ async function filterAndShowTeams(divisions) {
 
 // Calculates team total players of teams using totals_fn, & displays them from most
 // players to least players in div_container
-function display_teams(totals_fn, teams, div_container) {
+function displayTeams(totals_fn, teams, div_container) {
     const ending = x => (x === 1 ? "" : "s");
     const totals = teams.map(totals_fn);
     // Make the headers & lists for teams
@@ -125,3 +98,24 @@ function optionsInputHandler(event) {
         ? ["block", "none"]
         : ["none", "block"];
 }
+
+const getFromAPI = str =>
+    fetch(`https://cors-proxy.blaseball-reference.com/database/${str}`);
+
+// Alerts for an error fetching API data
+const aerror = response => alert(
+    "Error fetching Blaseball API data: " + response.status
+);
+
+// Functions for calculating total players on a team
+const teamTotal = team => team.lineup.length + team.rotation.length;
+const ttShadows = team => teamTotal(team) + team.shadows.length;
+
+const allTeamsRequest = getFromAPI("allTeams");
+
+getFromAPI("allDivisions").then(function(response) {
+    if (response.ok)
+        response.json().then(filterAndShowTeams);
+    else
+        aerror(response.status);
+});
