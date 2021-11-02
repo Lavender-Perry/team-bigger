@@ -5,29 +5,22 @@
 // Waits for allTeamsRequest, filters teams, prepares all lists for display
 async function filterAndShowTeams(divisions) {
     // Filter all teams to just the ones in the game
-    const divisionNames = [
-        // Update whenever Blaseball divisions change
-        "Vault",
-        "Hall",
-        "Horizon",
-        "Desert"
-    ];
-    const teamIDs = divisions
-        .filter(division => divisionNames.indexOf(division.name) !== -1)
+    // Update when divisions change
+    const team_ids = divisions.slice(28, 31)
         .reduce((acc, val) => acc.concat(val.teams), []);
 
-    const allTeamsResponse = await allTeamsRequest;
-    if (!allTeamsResponse.ok)
-        aerror(allTeamsResponse.status);
+    const allTeams_response = await allTeams_request;
+    if (!allTeams_response.ok)
+        aerror(allTeams_response.status);
 
-    const teams = await allTeamsResponse.json();
-    const gameTeams = teams.filter(team => teamIDs.indexOf(team.id) !== -1);
+    const teams = await allTeams_response.json();
+    const game_teams = teams.filter(team => team_ids.indexOf(team.id) !== -1);
 
     // Display normal results
-    displayTeams(teamTotal, gameTeams, results);
+    displayTeams(teamTotal, game_teams, results);
     results.style.display = "block";
     // Get shadowed ready for display
-    displayTeams(ttShadows, gameTeams, results_shadowed);
+    displayTeams(ttShadows, game_teams, results_shadowed);
     // Get FK results ready for display
     displayTeams(teamTotal, teams, fkresults);
     displayTeams(ttShadows, teams, fkresults_shadowed);
@@ -57,13 +50,11 @@ function displayTeams(totals_fn, teams, div_container) {
         });
     // Put the teams in the lists
     teams.forEach(function(team, pos) {
+        const shadow_string = div_container.id.endsWith("_shadowed")
+            ? `, ${team.shadows.length} shadowed player${ending(team.shadows.length)}`
+            : "";
         const hitters = team.lineup.length;
         const pitchers = team.rotation.length;
-        let shadow_string = "";
-        if (div_container.id.endsWith("_shadowed")) {
-            let shadows = team.shadows.length;
-            shadow_string = `, ${shadows} shadowed player${ending(shadows)}`;
-        }
         document.getElementById(div_container.id + "_tlist" + totals[pos])
             .insertAdjacentHTML(
                 "beforeend", 
@@ -76,31 +67,28 @@ function displayTeams(totals_fn, teams, div_container) {
 
 // Handles all changes to website options
 function optionsInputHandler(event) {
-    let divToggles;
-    const target = event.target;
-    switch (target) {
-        case fkteams_toggle: {
-            divToggles = shadows_toggle.checked
-                ? {on: fkresults_shadowed, off: results_shadowed}
-                : {on: fkresults, off: results};
-            break;
+    const div_toggles = function () {
+        switch (event.target) {
+            case fkteams_toggle:
+                return shadows_toggle.checked
+                    ? {on: fkresults_shadowed, off: results_shadowed}
+                    : {on: fkresults, off: results};
+            case shadows_toggle:
+                return fkteams_toggle.checked
+                    ? {on: fkresults_shadowed, off: fkresults}
+                    : {on: results_shadowed, off: results};
+            default:
+                throw `Unknown event input target ID ${event.target.id}`;
         }
-        case shadows_toggle: {
-            divToggles = fkteams_toggle.checked
-                ? {on: fkresults_shadowed, off: fkresults}
-                : {on: results_shadowed, off: results};
-            break;
-        }
-        default:
-            throw `Unknown input event target ID ${target.id}`;
-    }
-    [divToggles.on.style.display, divToggles.off.style.display] = target.checked
+    }();
+    [div_toggles.on.style.display, div_toggles.off.style.display] = event.target.checked
         ? ["block", "none"]
         : ["none", "block"];
 }
 
+// Change this to corsmechanics if that ever gets consistent uptime
 const getFromAPI = str =>
-    fetch(`https://cors-proxy.blaseball-reference.com/database/${str}`);
+    fetch(`https://jsonp.afeld.me/?url=https://api.blaseball.com/database/${str}`);
 
 // Alerts for an error fetching API data
 const aerror = response => alert(
@@ -111,7 +99,7 @@ const aerror = response => alert(
 const teamTotal = team => team.lineup.length + team.rotation.length;
 const ttShadows = team => teamTotal(team) + team.shadows.length;
 
-const allTeamsRequest = getFromAPI("allTeams");
+const allTeams_request = getFromAPI("allTeams");
 
 getFromAPI("allDivisions").then(function(response) {
     if (response.ok)
