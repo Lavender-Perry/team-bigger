@@ -1,59 +1,61 @@
 <!DOCTYPE html>
-<head>
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <title>
-        Blaseball Roster Sizes
-    </title>
-</head>
-<body>
-    <form id="options">
-        <input type="checkbox" id="fkteams_toggle">
-        <label for="fkteams_toggle">
-            Toggle teams that are not in the ILB.
-            This may include spoilers for new teams.
-        </label>
-        <br />
-        <input type="checkbox" id="shadows_toggle">
-        <label for="shadows_toggle">
-            Toggle shadowed players
-        </label>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <title>
+            Blaseball Roster Sizes
+        </title>
+    </head>
+    <body>
+        <form id="options">
+            <input type="checkbox" id="fkteams_toggle">
+            <label for="fkteams_toggle">
+                Toggle teams that are not in the ILB.
+                This may include spoilers for new teams.
+            </label>
+            <br />
+            <input type="checkbox" id="shadows_toggle">
+            <label for="shadows_toggle">
+                Toggle shadowed players
+            </label>
+            <hr />
+        </form>
+        <div id="results">
+        </div>
+        <div id="results_shadowed">
+        </div>
+        <div id="fkresults">
+        </div>
+        <div id="fkresults_shadowed">
+        </div>
+        <h1 id="progress">
+            Loading...
+        </h1>
         <hr />
-    </form>
-    <div id="results">
-    </div>
-    <div id="results_shadowed">
-    </div>
-    <div id="fkresults">
-    </div>
-    <div id="fkresults_shadowed">
-    </div>
-    <h1 id="progress">
-        Loading...
-    </h1>
-    <hr />
-    <h2>
-        Source code: 
-        <a href="https://gitdab.com/elle/team-bigger">
-            https://gitdab.com/elle/team-bigger
-        </a>
-    </h2>
-    <h3>
-        Old website (broken & will not be updated):
-        <a href="https://team-big.neocities.org">
-            https://team-big.neocities.org
-        </a>
-    </h3>
-    <script src="main.js">
-    </script>
-    <noscript>
-        <hr />
-        your browser is bad and doesn't support javascript, or you turned it off
-        <br />
-        this website needs javascript to function
-        <br />
-        please enable javascript, if you want you can check 
-        its not doing anything bad by looking at the source code
-        <br />
-        if you have enabled it, refreshing the page should work
-    </noscript>
-</body>
+        <h2>
+            Source code: 
+            <a href="https://gitdab.com/elle/team-bigger">
+                https://gitdab.com/elle/team-bigger
+            </a>
+        </h2>
+        <h3>
+            Old website (broken & will not be updated):
+            <a href="https://team-big.neocities.org">
+                https://team-big.neocities.org
+            </a>
+        </h3>
+        <script src="main.js">
+        </script>
+        <noscript>
+            <hr />
+            your browser is bad and doesn't support javascript, or you turned it off
+            <br />
+            this website needs javascript to function
+            <br />
+            please enable javascript, if you want you can check 
+            its not doing anything bad by looking at the source code
+            <br />
+            if you have enabled it, refreshing the page should work
+        </noscript>
+    </body>
+</html>
