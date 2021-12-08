@@ -6,7 +6,7 @@
 async function filterAndShowTeams(divisions) {
     // Filter all teams to just the ones in the game
     // Update when divisions change
-    const game_divisions = divisions.slice(28, 31).concat(divisions[39]);
+    const game_divisions = divisions.slice(28, 31).concat(divisions[43]);
     const team_ids = game_divisions.reduce((acc, val) => acc.concat(val.teams), []);
 
     const allTeams_response = await allTeams_request;
