@@ -114,4 +114,4 @@ getFromAPI("allDivisions").then(function(response) {
         response.json().then(filterAndShowTeams);
     else
         aerror(response.status);
-})
+});
