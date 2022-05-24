@@ -94,9 +94,7 @@ function optionsInputHandler(event) {
     ] = event.target.checked ? ["block", "none"] : ["none", "block"];
 }
 
-// Change this to corsmechanics if that ever gets consistent uptime
-const getFromAPI = str =>
-    fetch(`https://jsonp.afeld.me/?url=https://api.blaseball.com/database/${str}`);
+const getFromAPI = str => fetch(`https://api.sibr.dev/proxy/database/${str}`);
 
 // Alerts for an error fetching API data
 const aerror = response => alert(
@@ -110,8 +108,11 @@ const ttShadows = team => teamTotal(team) + team.shadows.length;
 const allTeams_request = getFromAPI("allTeams");
 
 getFromAPI("allDivisions").then(function(response) {
-    if (response.ok)
+    if (response.ok) {
         response.json().then(filterAndShowTeams);
-    else
+    }
+    else {
         aerror(response.status);
+    }
 });
+
