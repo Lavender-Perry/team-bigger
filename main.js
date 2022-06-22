@@ -10,8 +10,9 @@ async function filterAndShowTeams(divisions) {
     const team_ids = game_divisions.reduce((acc, val) => acc.concat(val.teams), []);
 
     const allTeams_response = await allTeams_request;
-    if (!allTeams_response.ok)
+    if (!allTeams_response.ok) {
         aerror(allTeams_response.status);
+    }
 
     const teams = await allTeams_response.json();
     const game_teams = teams.filter(team => team_ids.indexOf(team.id) !== -1);
@@ -36,12 +37,12 @@ async function filterAndShowTeams(divisions) {
 // Calculates team total players of teams using totals_fn, & displays them from most
 // players to least players in div_container
 function displayTeams(totals_fn, teams, div_container) {
-    const ending = x => (x === 1 ? "" : "s");
+    const ending = (x) => (x === 1 ? "" : "s");
     const totals = teams.map(totals_fn);
     // Make the headers & lists for teams
     totals.slice().sort((x, y) => x - y)
         .filter((total, pos, array) => !pos || total !== array[pos - 1])
-        .forEach(total => div_container.insertAdjacentHTML(
+        .forEach((total) => div_container.insertAdjacentHTML(
             "afterbegin",
             `<h1>${total} player${ending(total)}</h1>
                 <ul id="${div_container.id}_tlist${total}"></ul>`
@@ -65,28 +66,21 @@ function displayTeams(totals_fn, teams, div_container) {
 
 // Handles all changes to website options
 function optionsInputHandler(event) {
-    const div_toggles = function() {
-        switch (event.target) {
-            case fkteams_toggle:
-                return shadows_toggle.checked ? {
-                    on: fkresults_shadowed,
-                    off: results_shadowed
-                } : {
-                    on: fkresults,
-                    off: results
-                };
-            case shadows_toggle:
-                return fkteams_toggle.checked ? {
-                    on: fkresults_shadowed,
-                    off: fkresults
-                } : {
-                    on: results_shadowed,
-                    off: results
-                };
-            default:
-                throw `Unknown event input target ID ${event.target.id}`;
-        }
-    }();
+    let div_toggles;
+    switch (event.target) {
+        case fkteams_toggle:
+            div_toggles = shadows_toggle.checked ?
+                {on: fkresults_shadowed, off: results_shadowed} :
+                {on: fkresults, off: results};
+            break;
+        case shadows_toggle:
+            div_toggles = fkteams_toggle.checked ?
+                {on: fkresults_shadowed, off: fkresults} :
+                {on: results_shadowed, off: results};
+            break;
+        default:
+            throw `Unknown event input target ID ${event.target.id}`;
+    }
 
     [
         div_toggles.on.style.display,
@@ -97,9 +91,7 @@ function optionsInputHandler(event) {
 const getFromAPI = str => fetch(`https://api.sibr.dev/proxy/database/${str}`);
 
 // Alerts for an error fetching API data
-const aerror = response => alert(
-    "Error fetching Blaseball API data: " + response.status
-);
+const aerror = res => alert("Error fetching Blaseball API data: " + res.status);
 
 // Functions for calculating total players on a team
 const teamTotal = team => team.lineup.length + team.rotation.length;
